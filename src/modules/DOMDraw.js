@@ -1,3 +1,5 @@
+import { renderProjects, renderTasks } from "./DOMEvent";
+
 const DOM_DRAW = () => {
     const container = document.getElementById('container');
 
@@ -71,6 +73,8 @@ const DOM_DRAW = () => {
     headerDraw();
     sideModalDraw();
     taskContainerDraw();
+    renderProjects();
+    renderTasks();
 };
 
 export default DOM_DRAW;
