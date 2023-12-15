@@ -24,7 +24,7 @@ class Storage {
         this.storage = JSON.parse(localStorage.getItem('todostorage'));
     }
 
-    newProject(projectName) {
+    newProject(projectName, projectId) {
         const project = new Project();
         project.setProjectName(projectName);
         project.setProjectId(this.storage.projects.length);
