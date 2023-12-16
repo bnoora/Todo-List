@@ -63,18 +63,22 @@ const DOM_DRAW = () => {
         const lowerSideModalContent = document.createElement('section');
         lowerSideModalContent.setAttribute('id', 'projects-container');
         sideModalContent.appendChild(lowerSideModalContent);
+
+        container.appendChild(sideModal);
     };
 
     const taskContainerDraw = () => {
         const taskContainer = document.createElement('section');
         taskContainer.setAttribute('id', 'task-container');
+
+        container.appendChild(taskContainer);
     };
 
     headerDraw();
     sideModalDraw();
     taskContainerDraw();
     renderProjects();
-    renderTasks();
+    // renderTasks();
 };
 
 export default DOM_DRAW;

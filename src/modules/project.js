@@ -2,7 +2,7 @@ class Project {
     constructor() {
         this.name = 'Project';
         this.id = 0;
-        this.tasks = {};
+        this.tasks = [];
     }
 
     setProjectName(name) {

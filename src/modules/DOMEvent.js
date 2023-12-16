@@ -2,33 +2,51 @@ import { upcomingWeek, today, allProjects, tasksByProject } from "./filteringlis
 import Storage from "./storage";
 
 const storage = new Storage();
+// storage.deleteStorage();
+storage.loadStorage();
 const container = document.getElementById("container");
 var currProjectId = 0;
 
 // Render the project on the side bar
 const renderProjects = () => {
     const projects = allProjects(storage);
+    console.log(1);
+    console.log(projects);
+    console.log(3);
     const projectsContainer = document.getElementById("projects-container");
     projectsContainer.innerHTML = "";
-    projects.forEach(project => {
-        const projectButton = document.createElement("button");
-        projectButton.setAttribute("class", "project-button");
-        projectButton.setAttribute("id", project.getProjectId());
-        projectButton.textContent = project.getProjectName();
-        projectsContainer.appendChild(projectButton);
-    });
 
-    const projectButtons = document.querySelectorAll(".project-button");
 
-    projectButtons.forEach(projectButton => {
-        projectButton.addEventListener("click", () => {
-            const tasks = tasksByProject(projectButton.id, storage);
-            projectButtons.forEach(btn => btn.classList.remove("project-button-selected"));
-            projectButton.classList.add("project-button-selected");
-            currProjectId = projectButton.id;
-            renderTasks(tasks);
+    renderTodayAndUpcomingWeekButtons(projectsContainer);
+
+    if (projects.length === 0) {
+        console.log(1);
+        const noProjects = document.createElement("p");
+        noProjects.setAttribute("class", "no-projects");
+        noProjects.textContent = "No Projects";
+        projectsContainer.appendChild(noProjects);
+    }
+    else {
+        projects.forEach(project => {
+            const projectButton = document.createElement("button");
+            projectButton.setAttribute("class", "project-button");
+            projectButton.setAttribute("id", project.getProjectId());
+            projectButton.textContent = project.getProjectName();
+            projectsContainer.appendChild(projectButton);
         });
-    });
+
+        const projectButtons = document.querySelectorAll(".project-button");
+
+        projectButtons.forEach(projectButton => {
+            projectButton.addEventListener("click", () => {
+                const tasks = tasksByProject(projectButton.id, storage);
+                projectButtons.forEach(btn => btn.classList.remove("project-button-selected"));
+                projectButton.classList.add("project-button-selected");
+                currProjectId = projectButton.id;
+                renderTasks(tasks);
+            });
+        });
+    }
 
     const newProjectButton = document.createElement("button");
     newProjectButton.setAttribute("class", "new-project-button");
@@ -44,42 +62,54 @@ const renderProjects = () => {
 const renderTasks = (tasks) => {
     const taskContainer = document.getElementById("task-container");
     taskContainer.innerHTML = "";
-    tasks.forEach(task => {
-        const taskDiv = document.createElement("div");
-        taskDiv.setAttribute("class", "task-div");
-        taskDiv.setAttribute("id", task.getTaskId());
+    if (tasks.length === 0) {
+        const noTasks = document.createElement("p");
+        noTasks.setAttribute("class", "no-tasks");
+        noTasks.textContent = "No Tasks";
+        taskContainer.appendChild(noTasks);
+    }
+    else {
+        console.log(tasks);
+        tasks.forEach(task => {
+            const taskDiv = document.createElement("div");
+            taskDiv.setAttribute("class", "task-div");
+            taskDiv.setAttribute("id", task.getTaskId());
+            console.log(task.getTaskId());
 
-        const taskTitle = document.createElement("h3");
-        taskTitle.setAttribute("class", "task-title");
-        taskTitle.textContent = task.getTaskTitle();
-        taskDiv.appendChild(taskTitle);
+            const taskTitle = document.createElement("h3");
+            taskTitle.setAttribute("class", "task-title");
+            taskTitle.textContent = task.getTaskTitle();
+            taskDiv.appendChild(taskTitle);
 
-        const taskDueDate = document.createElement("p");
-        taskDueDate.setAttribute("class", "task-due-date");
-        taskDueDate.textContent = task.getTaskDueDate();
-        taskDiv.appendChild(taskDueDate);
+            const taskDueDate = document.createElement("p");
+            taskDueDate.setAttribute("class", "task-due-date");
+            taskDueDate.textContent = task.getTaskDueDate();
+            taskDiv.appendChild(taskDueDate);
 
-        const taskDelete = document.createElement("button");
-        taskDelete.setAttribute("class", "task-delete");
-        taskDelete.textContent = "Delete";
-        taskDiv.appendChild(taskDelete);
+            const taskDelete = document.createElement("button");
+            taskDelete.setAttribute("class", "task-delete");
+            taskDelete.textContent = "Delete";
+            taskDiv.appendChild(taskDelete);
 
-        if (task.getTaskPriority() === "High") {
-            taskDiv.setAttribute("class", "task-high");
-        }
-        if (task.getTaskPriority() === "Medium") {
-            taskDiv.setAttribute("class", "task-medium");
-        }
-        if (task.getTaskPriority() === "Low") {
-            taskDiv.setAttribute("class", "task-low");
-        }
-    });    
+            if (task.getTaskPriority() === "High") {
+                taskDiv.setAttribute("class", "task-high");
+            }
+            if (task.getTaskPriority() === "Medium") {
+                taskDiv.setAttribute("class", "task-medium");
+            }
+            if (task.getTaskPriority() === "Low") {
+                taskDiv.setAttribute("class", "task-low");
+            }
+
+            taskContainer.appendChild(taskDiv);
+        });
+    }    
 
     const taskDivs = document.querySelectorAll(".task-div");
 
     taskDivs.forEach(taskDiv => {
         taskDiv.addEventListener("click", (e) => {
-            const task = storage.getProjectTasks(taskDiv.id);
+            const task = storage.tasks[taskDiv.id];
             renderTaskPopup(task);
         });
     });
@@ -88,8 +118,8 @@ const renderTasks = (tasks) => {
 
     taskDeletes.forEach(taskDelete => {
         taskDelete.addEventListener("click", (e) => {
-            const task = storage.getProjectTasks(taskDelete.parentNode.id);
-            storage.deleteTask(task[0].getTaskId());
+            console.log(taskDelete.parentNode.id);
+            storage.deleteTask(currProjectId, taskDelete.parentNode.id);
             renderTasks(tasks);
         });
     });
@@ -420,5 +450,31 @@ const renderEditTaskPopup = (task) => {
         editTaskPopup.remove();
     });
 };
+
+// Render the today and upcoming week buttons on the side bar
+const renderTodayAndUpcomingWeekButtons = (projectsContainer) => {
+    const todayButton = document.createElement("button");
+    todayButton.setAttribute("class", "sproject-button");
+    todayButton.setAttribute("id", "today-button");
+    todayButton.textContent = "Today";
+    projectsContainer.appendChild(todayButton);
+
+    const upcomingWeekButton = document.createElement("button");
+    upcomingWeekButton.setAttribute("class", "sproject-button");
+    upcomingWeekButton.setAttribute("id", "upcoming-week-button");
+    upcomingWeekButton.textContent = "Upcoming Week";
+    projectsContainer.appendChild(upcomingWeekButton);
+
+    todayButton.addEventListener("click", (e) => {
+        const tasks = today(storage);
+        renderTasks(tasks);
+    });
+
+    upcomingWeekButton.addEventListener("click", (e) => {
+        const tasks = upcomingWeek(storage);
+        renderTasks(tasks);
+    });
+}
+
 
 export { renderProjects, renderTasks};
