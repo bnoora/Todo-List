@@ -7,18 +7,12 @@ const DOM_DRAW = () => {
         const header = document.createElement('header');
         header.setAttribute('id', 'header');
 
-        // Header Title
-        const headerTitle = document.createElement('h1');
-        headerTitle.setAttribute('id', 'header-title');
-        headerTitle.textContent = 'Todo List';
-        header.appendChild(headerTitle);
-
         // Header Navigation
         const headerNav = document.createElement('nav');
         headerNav.setAttribute('id', 'header-nav');
         const headerNavList = document.createElement('ul');
         headerNavList.setAttribute('id', 'header-nav-list');
-        const headerNavListItems = ['Home', 'Projects', 'Tasks'];
+        const headerNavListItems = ['Home'];
         headerNavListItems.forEach((item) => {
             const listItem = document.createElement('li');
             listItem.setAttribute('class', 'header-nav-list-item');
@@ -26,6 +20,13 @@ const DOM_DRAW = () => {
             headerNavList.appendChild(listItem);
         });
         headerNav.appendChild(headerNavList);
+        header.appendChild(headerNav);
+
+        // Header Title
+        const headerTitle = document.createElement('h1');
+        headerTitle.setAttribute('id', 'header-title');
+        headerTitle.textContent = 'Todo List';
+        header.appendChild(headerTitle);
 
         // Header Search *TODO*
         const headerSearch = document.createElement('div');
@@ -35,48 +36,52 @@ const DOM_DRAW = () => {
         headerSearchInput.setAttribute('type', 'text');
         headerSearchInput.setAttribute('placeholder', 'Search');
         headerSearch.appendChild(headerSearchInput);
-        headerNav.appendChild(headerSearch);
+        header.appendChild(headerSearch);
 
         container.appendChild(header);
     };
 
-    const sideModalDraw = () => {
-        const sideModal = document.createElement('div');
+    const sideModalDraw = (mainContent) => {
+        const sideModal = document.createElement('aside');
         sideModal.setAttribute('id', 'side-modal');
-
-        // Side Modal Content
-        const sideModalContent = document.createElement('section');
-        sideModalContent.setAttribute('id', 'task-modal-content');
-        sideModal.appendChild(sideModalContent);
 
         // Upper Side Modal Content
         const upperSideModalContent = document.createElement('section');
         upperSideModalContent.setAttribute('id', 'upper-modal-content');
-        sideModalContent.appendChild(upperSideModalContent);
+        sideModal.appendChild(upperSideModalContent);
 
         // Line Break
         const lineBreak = document.createElement('hr');
         lineBreak.setAttribute('id', 'line-break');
-        upperSideModalContent.appendChild(lineBreak);
+        sideModal.appendChild(lineBreak);
 
         // Lower Side Modal Content
         const lowerSideModalContent = document.createElement('section');
         lowerSideModalContent.setAttribute('id', 'projects-container');
-        sideModalContent.appendChild(lowerSideModalContent);
+        sideModal.appendChild(lowerSideModalContent);
 
-        container.appendChild(sideModal);
+        mainContent.appendChild(sideModal);
     };
 
-    const taskContainerDraw = () => {
+    const taskContainerDraw = (mainContent) => {
         const taskContainer = document.createElement('section');
         taskContainer.setAttribute('id', 'task-container');
 
-        container.appendChild(taskContainer);
+        mainContent.appendChild(taskContainer);
+    };
+
+    const mainContentDraw = () => {
+        const mainContent = document.createElement('section');
+        mainContent.setAttribute('id', 'main-content');
+
+        sideModalDraw(mainContent);
+        taskContainerDraw(mainContent);
+
+        container.appendChild(mainContent);
     };
 
     headerDraw();
-    sideModalDraw();
-    taskContainerDraw();
+    mainContentDraw();
     renderProjects();
     // renderTasks();
 };

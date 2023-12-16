@@ -14,10 +14,11 @@ const renderProjects = () => {
     console.log(projects);
     console.log(3);
     const projectsContainer = document.getElementById("projects-container");
+    const upperModalContent = document.getElementById("upper-modal-content");
     projectsContainer.innerHTML = "";
 
 
-    renderTodayAndUpcomingWeekButtons(projectsContainer);
+    renderTodayAndUpcomingWeekButtons(upperModalContent);
 
     if (projects.length === 0) {
         console.log(1);
@@ -452,18 +453,18 @@ const renderEditTaskPopup = (task) => {
 };
 
 // Render the today and upcoming week buttons on the side bar
-const renderTodayAndUpcomingWeekButtons = (projectsContainer) => {
+const renderTodayAndUpcomingWeekButtons = (upperModalContent) => {
     const todayButton = document.createElement("button");
     todayButton.setAttribute("class", "sproject-button");
     todayButton.setAttribute("id", "today-button");
     todayButton.textContent = "Today";
-    projectsContainer.appendChild(todayButton);
+    upperModalContent.appendChild(todayButton);
 
     const upcomingWeekButton = document.createElement("button");
     upcomingWeekButton.setAttribute("class", "sproject-button");
     upcomingWeekButton.setAttribute("id", "upcoming-week-button");
     upcomingWeekButton.textContent = "Upcoming Week";
-    projectsContainer.appendChild(upcomingWeekButton);
+    upperModalContent.appendChild(upcomingWeekButton);
 
     todayButton.addEventListener("click", (e) => {
         const tasks = today(storage);
