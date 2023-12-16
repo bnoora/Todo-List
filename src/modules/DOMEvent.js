@@ -5,7 +5,7 @@ const storage = new Storage();
 const container = document.getElementById("container");
 var currProjectId = 0;
 
-
+// Render the project on the side bar
 const renderProjects = () => {
     const projects = allProjects(storage);
     const projectsContainer = document.getElementById("projects-container");
@@ -21,8 +21,10 @@ const renderProjects = () => {
     const projectButtons = document.querySelectorAll(".project-button");
 
     projectButtons.forEach(projectButton => {
-        projectButton.addEventListener("click", (e) => {
+        projectButton.addEventListener("click", () => {
             const tasks = tasksByProject(projectButton.id, storage);
+            projectButtons.forEach(btn => btn.classList.remove("project-button-selected"));
+            projectButton.classList.add("project-button-selected");
             currProjectId = projectButton.id;
             renderTasks(tasks);
         });
@@ -38,6 +40,7 @@ const renderProjects = () => {
     });
 }
 
+// Render the tasks on the main page from the selected project
 const renderTasks = (tasks) => {
     const taskContainer = document.getElementById("task-container");
     taskContainer.innerHTML = "";
@@ -101,6 +104,7 @@ const renderTasks = (tasks) => {
     });
 }
 
+// Render the new project popup for creating a new project
 const renderNewProjectPopup = () => {
     const newProjectPopup = document.createElement("div");
     newProjectPopup.setAttribute("class", "popup");
@@ -152,6 +156,8 @@ const renderNewProjectPopup = () => {
     });
 }
 
+
+// Render the new task popup for creating a new task
 const renderNewTaskPopup = () => {
     const newTaskPopup = document.createElement("div");
     newTaskPopup.setAttribute("class", "popup");
@@ -240,6 +246,7 @@ const renderNewTaskPopup = () => {
     });
 }
 
+// Render the task popup for viewing a task
 const renderTaskPopup = (task) => {
     const taskPopup = document.createElement("div");
     taskPopup.setAttribute("class", "popup");
@@ -318,6 +325,7 @@ const renderTaskPopup = (task) => {
     });
 }
 
+// Render the edit task popup for editing a task
 const renderEditTaskPopup = (task) => {
     const editTaskPopup = document.createElement("div");
     editTaskPopup.setAttribute("class", "popup");
