@@ -132,10 +132,10 @@ aside section {
     padding: 10px 2rem;
 }
 
-aside section > .project-button{
+aside section > .project-button, .sproject-button, .new-project-button {
     border-radius: 1rem;
     padding: 10px;
-    width: 90%;
+    min-width: 90%;
     max-height: 50px;
     border: none;
     outline: none;
@@ -147,16 +147,16 @@ aside section > .project-button{
     gap: 1rem;
 }
 
-.project-button > * {
+.project-button > *, .sproject-button > *, .new-project-button > * {
     margin: 0;
     padding: 0;
 }
 
-.project-button:hover {
+.project-button:hover, .sproject-button:hover, .new-project-button:hover {
     background-color: var(--primary-color);
 }
 
-.project-button > p {
+.project-button > p, .sproject-button > p {
     overflow: hidden;
 }
 
@@ -164,8 +164,10 @@ aside section > .project-button{
     height: 20px; 
     width: auto;
     margin-left: 10px;
-    vertical-align: middle;
+    align-self: center;
 }
+
+
 
 
 /* Task Container */
@@ -175,6 +177,7 @@ aside section > .project-button{
     gap: 1rem;
     padding: 1rem 2rem;
     grid-template-rows: minmax(50px, 50px);
+    grid-auto-rows: minmax(50px, 50px);
 }
 
 .task-div {
@@ -190,7 +193,61 @@ aside section > .project-button{
     cursor: pointer;
 }
 
+.task-high {
+    box-shadow: 0 0 10px 0 rgba(255, 0, 0, 0.774);
+}
+
+.task-medium {
+    box-shadow: 0 0 10px 0 rgba(177, 0, 221, 0.938);
+}
+
+.task-low {
+    box-shadow: 0 0 10px 0 rgba(0, 255, 0, 0.774);
+}
+
 .task-div.task-div:hover {
     background-color: var(--primary-color);
 }
 
+
+
+/* PopUps */
+.popup-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+.popup {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 1rem;
+    height: fit-content;
+}
+
+.popup > * {
+    margin: 0;
+    padding: 0;
+}
+
+.popup-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.popup-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}

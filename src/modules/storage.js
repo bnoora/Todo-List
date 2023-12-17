@@ -1,6 +1,5 @@
 import Task from "./task";
 import Project from "./project";
-import TodoList from "./todolist";
 
 
 class Storage {
@@ -142,6 +141,42 @@ class Storage {
     getTask(projectId, taskId) {
         return this.storage.projects[projectId].tasks[taskId];
     }
+
+    getTodayTasks() {
+        const todayTasks = {};
+        const tasks = this.getTasks();
+        const today = new Date();
+        const todayDay = today.getDay();
+        const todayMonth = today.getMonth();
+        const todayYear = today.getFullYear();
+        for (let taskId in tasks) {
+            if (tasks[taskId].getTaskDueDate() === new Date(todayYear, todayMonth, todayDay).toDateString()) {
+                todayTasks[taskId] = tasks[taskId];
+            }
+        }
+        return todayTasks;
+    }
+
+    getThisWeekTasks() {
+        const thisWeekTasks = {};
+        const tasks = this.getTasks();
+        const today = new Date();
+        const todayDay = today.getDay();
+        const todayDate = today.getDate();
+        const todayMonth = today.getMonth();
+        const todayYear = today.getFullYear();
+        const thisWeek = [];
+        for (let i = 0; i < 7; i++) {
+            thisWeek.push(new Date(todayYear, todayMonth, todayDate - todayDay + i).toDateString());
+        }
+        for (let taskId in tasks) {
+            if (thisWeek.includes(tasks[taskId].getTaskDueDate())) {
+                thisWeekTasks[taskId] = tasks[taskId];
+            }
+        }
+        return thisWeekTasks;
+    }
+        
 }
 
 export default Storage;

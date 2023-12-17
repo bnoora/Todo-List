@@ -58,9 +58,17 @@ const renderProjects = () => {
     }
     
 
-    const newProjectButton = document.createElement("button");
+    const newProjectButton = document.createElement("div");
+    const plusImage = document.createElement("img");
+    const newProjectText = document.createElement("p");
+    plusImage.setAttribute('src', './svg/plus-clock.svg');
+    plusImage.classList.add('svg-icon');
+    newProjectButton.appendChild(plusImage);
+    newProjectText.textContent = "New Project";
+    newProjectButton.appendChild(newProjectText);
     newProjectButton.setAttribute("class", "new-project-button");
-    newProjectButton.textContent = "+ New Project";
+
+
     projectsContainer.appendChild(newProjectButton);
 
     newProjectButton.addEventListener("click", (e) => {
@@ -230,6 +238,11 @@ const renderNewProjectPopup = () => {
 
 // Render the new task popup for creating a new task
 const renderNewTaskPopup = () => {
+    const today = new Date();
+    const date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    const popupContainer = document.createElement("div");
+    popupContainer.setAttribute("class", "popup-container");
+
     const newTaskPopup = document.createElement("div");
     newTaskPopup.setAttribute("class", "popup");
     newTaskPopup.setAttribute("id", "new-task-popup");
@@ -249,12 +262,6 @@ const renderNewTaskPopup = () => {
     newTaskPopupForm.setAttribute("id", "new-task-popup-form");
     newTaskPopupContent.appendChild(newTaskPopupForm);
 
-    const newTaskPopupFormLabel = document.createElement("label");
-    newTaskPopupFormLabel.setAttribute("class", "popup-form-label");
-    newTaskPopupFormLabel.setAttribute("for", "new-task-popup-form-input");
-    newTaskPopupFormLabel.textContent = "Task Name";
-    newTaskPopupForm.appendChild(newTaskPopupFormLabel);
-
     const newTaskPopupFormInput = document.createElement("input");
     newTaskPopupFormInput.setAttribute("class", "popup-form-input");
     newTaskPopupFormInput.setAttribute("id", "new-task-popup-form-input");
@@ -273,7 +280,7 @@ const renderNewTaskPopup = () => {
     newTaskPopupFormDueDate.setAttribute("class", "popup-form-input");
     newTaskPopupFormDueDate.setAttribute("id", "new-task-popup-form-due-date");
     newTaskPopupFormDueDate.setAttribute("type", "date");
-    newTaskPopupFormDueDate.setAttribute("placeholder", "xx/xx/xxxx");
+    newTaskPopupFormDueDate.setAttribute("value", date);
     newTaskPopupForm.appendChild(newTaskPopupFormDueDate);
 
     const newTaskPopupFormPriority = document.createElement("select");
@@ -303,7 +310,8 @@ const renderNewTaskPopup = () => {
     newTaskPopupFormSubmit.setAttribute("value", "Create Task");
     newTaskPopupForm.appendChild(newTaskPopupFormSubmit);
 
-    container.appendChild(newTaskPopup);
+    popupContainer.appendChild(newTaskPopup);
+    container.appendChild(popupContainer);
 
     newTaskPopupForm.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -312,9 +320,15 @@ const renderNewTaskPopup = () => {
         const newTaskDueDate = document.getElementById("new-task-popup-form-due-date").value;
         const newTaskPriority = document.getElementById("new-task-popup-form-priority").value;
         storage.newTask(currProjectId, newTaskTitle, newTaskDesc, newTaskDueDate, newTaskPriority);
-        projectTasks = storage.getTasks(currProjectId);
+        const projectTasks = storage.getProjectTasks(currProjectId);
         renderTasks(projectTasks);
         newTaskPopup.remove();
+    });
+
+    popupContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("popup-container")) {
+            popupContainer.remove();
+        }
     });
 }
 
@@ -495,25 +509,40 @@ const renderEditTaskPopup = (task) => {
 
 // Render the today and upcoming week buttons on the side bar
 const renderTodayAndUpcomingWeekButtons = (upperModalContent) => {
-    const todayButton = document.createElement("button");
+    const todayButton = document.createElement("div");
+    const fastClockImage = document.createElement("img");
+    const todayText = document.createElement("p");
+    todayText.textContent = "Today";
+    fastClockImage.setAttribute('src', './svg/fastclock.svg');
+    fastClockImage.classList.add('svg-icon');
+    todayButton.appendChild(fastClockImage);
     todayButton.setAttribute("class", "sproject-button");
     todayButton.setAttribute("id", "today-button");
-    todayButton.textContent = "Today";
+    todayButton.appendChild(fastClockImage);
+    todayButton.appendChild(todayText);
+    
     upperModalContent.appendChild(todayButton);
 
     const upcomingWeekButton = document.createElement("button");
+    const calendarImage = document.createElement("img");
+    const upcomingWeekText = document.createElement("p");
+    upcomingWeekText.textContent = "This Week";
+    calendarImage.setAttribute('src', './svg/table.svg');
+    calendarImage.classList.add('svg-icon');
+    upcomingWeekButton.appendChild(calendarImage);
+    upcomingWeekButton.appendChild(upcomingWeekText);
     upcomingWeekButton.setAttribute("class", "sproject-button");
     upcomingWeekButton.setAttribute("id", "upcoming-week-button");
-    upcomingWeekButton.textContent = "Upcoming Week";
+
     upperModalContent.appendChild(upcomingWeekButton);
 
     todayButton.addEventListener("click", (e) => {
-        const tasks = today(storage);
+        const tasks = storage.getTodayTasks();
         renderTasks(tasks);
     });
 
     upcomingWeekButton.addEventListener("click", (e) => {
-        const tasks = upcomingWeek(storage);
+        const tasks = storage.getThisWeekTasks();
         renderTasks(tasks);
     });
 }
