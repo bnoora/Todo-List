@@ -59,15 +59,23 @@ class Storage {
     }
 
     deleteProject(projectId) {
-        this.storage.projects.splice(projectId, 1);
-        this.saveStorage();
+        if (this.storage.projects[projectId]) {
+            delete this.storage.projects[projectId];
+            this.saveStorage();
+        } else {
+            console.log("Project not found");
+        }
     }
 
     deleteTask(projectId, taskId) {
-        this.storage.projects[projectId].tasks.splice(taskId, 1);
-        this.saveStorage();
+        if (this.storage.projects[projectId] && this.storage.projects[projectId].tasks[taskId]) {
+            delete this.storage.projects[projectId].tasks[taskId];
+            this.saveStorage();
+        } else {
+            console.log("Project or task not found");
+        }
     }
-
+    
     editProject(projectId, projectName) {
         this.storage.projects[projectId].setProjectName(projectName);
         this.saveStorage();
@@ -130,8 +138,10 @@ class Storage {
     generateUniqueId() {
         return Date.now().toString() + Math.random().toString(36)
     }
+
+    getTask(projectId, taskId) {
+        return this.storage.projects[projectId].tasks[taskId];
+    }
 }
-
-
 
 export default Storage;

@@ -12,28 +12,31 @@ const renderProjects = () => {
     const projects = allProjects(storage);
     const projectsContainer = document.getElementById("projects-container");
     const upperModalContent = document.getElementById("upper-modal-content");
+    upperModalContent.innerHTML = "";
     projectsContainer.innerHTML = "";
 
 
     renderTodayAndUpcomingWeekButtons(upperModalContent);
 
-    if (projects.length === 0) {
+    if (Object.keys(projects).length === 0) {
         const noProjects = document.createElement("p");
         noProjects.setAttribute("class", "no-projects");
         noProjects.textContent = "No Projects";
         projectsContainer.appendChild(noProjects);
     }
     else {
-        projects.forEach(project => {
+        for (let projectId in projects) {
+            const project = projects[projectId];
+    
             const projectButton = document.createElement("button");
             projectButton.setAttribute("class", "project-button");
-            projectButton.setAttribute("id", project.getProjectId());
+            projectButton.setAttribute("id", projectId);
             projectButton.textContent = project.getProjectName();
             projectsContainer.appendChild(projectButton);
-        });
-
+        }
+    
         const projectButtons = document.querySelectorAll(".project-button");
-
+    
         projectButtons.forEach(projectButton => {
             projectButton.addEventListener("click", () => {
                 const tasks = tasksByProject(projectButton.id, storage);
@@ -44,6 +47,7 @@ const renderProjects = () => {
             });
         });
     }
+    
 
     const newProjectButton = document.createElement("button");
     newProjectButton.setAttribute("class", "new-project-button");
@@ -59,7 +63,6 @@ const renderProjects = () => {
 const renderTasks = (tasks) => {
     const taskContainer = document.getElementById("task-container");
     taskContainer.innerHTML = "";
-    console.log(tasks);
     if (Object.keys(tasks).length === 0) {
         const noTasks = document.createElement("p");
         noTasks.setAttribute("class", "no-tasks");
@@ -99,12 +102,14 @@ const renderTasks = (tasks) => {
 
             const taskDelete = document.createElement("button");
             taskDelete.setAttribute("class", "task-delete");
+            taskDelete.classList.add("exclude-from-div-click");
             taskDelete.textContent = "Delete";
             taskActions.appendChild(taskDelete);
 
             const taskCompleted = document.createElement("input");
             taskCompleted.setAttribute("class", "task-completed");
             taskCompleted.setAttribute("id", "task-completed");
+            taskCompleted.classList.add("exclude-from-div-click");
             taskCompleted.setAttribute("type", "checkbox");
             if (task.getTaskCompleted() === true) {
                 taskCompleted.checked = true;
@@ -117,20 +122,24 @@ const renderTasks = (tasks) => {
 
     const taskDivs = document.querySelectorAll(".task-div");
 
-    if (taskDivs.length ==! 0) {
+    if (taskDivs.length !== 0) {
         taskDivs.forEach(taskDiv => {
             taskDiv.addEventListener("click", (e) => {
-                console.log(1);
+                if (!e.target.classList.contains('exclude-from-div-click') && !e.target.closest('.exclude-from-click')) {
+                    const task = storage.getTask(currProjectId, taskDiv.id);
+                    renderTaskPopup(task);
+                }
             });
         });
     }
+    
 
     const taskDeletes = document.querySelectorAll(".task-delete");
 
-    if (taskDeletes.length ==! 0) {
+    if (taskDeletes.length !== 0) {
         taskDeletes.forEach(taskDelete => {
             taskDelete.addEventListener("click", (e) => {
-                storage.deleteTask(currProjectId, taskDelete.parentNode.id);
+                storage.deleteTask(currProjectId, taskDelete.parentNode.parentNode.id);
                 renderTasks(tasks);
             });
         });
@@ -138,10 +147,10 @@ const renderTasks = (tasks) => {
 
     const taskCompleteds = document.querySelectorAll(".task-completed");
 
-    if (taskCompleteds.length ==! 0) {
+    if (taskCompleteds.length !== 0) {
         taskCompleteds.forEach(taskCompleted => {
             taskCompleted.addEventListener("click", (e) => {
-                storage.setTaskCompleted(currProjectId, taskCompleted.parentNode.id, taskCompleted.checked);
+                storage.setTaskCompleted(currProjectId, taskCompleted.parentNode.parentNode.id, taskCompleted.checked);
                 renderTasks(tasks);
             });
         });
@@ -206,6 +215,7 @@ const renderNewProjectPopup = () => {
         storage.newProject(newProjectName);
         renderProjects();
         newProjectPopup.remove();
+        renderProjects();
     });
 }
 
@@ -294,14 +304,14 @@ const renderNewTaskPopup = () => {
         const newTaskDueDate = document.getElementById("new-task-popup-form-due-date").value;
         const newTaskPriority = document.getElementById("new-task-popup-form-priority").value;
         storage.newTask(currProjectId, newTaskTitle, newTaskDesc, newTaskDueDate, newTaskPriority);
-        renderTasks(tasksByProject(0, storage));
+        projectTasks = storage.getTasks(currProjectId);
+        renderTasks(projectTasks);
         newTaskPopup.remove();
     });
 }
 
 // Render the task popup for viewing a task
 const renderTaskPopup = (task) => {
-    console.log(1);
     // const taskPopup = document.createElement("div");
     // taskPopup.setAttribute("class", "popup");
     // taskPopup.setAttribute("id", "task-popup");
