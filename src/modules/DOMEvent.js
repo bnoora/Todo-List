@@ -28,10 +28,19 @@ const renderProjects = () => {
         for (let projectId in projects) {
             const project = projects[projectId];
     
-            const projectButton = document.createElement("button");
+
+            const projectButton = document.createElement("div");
+            const svgImage = document.createElement("img");
+            svgImage.setAttribute('src', './svg/lines.svg'); 
+            svgImage.classList.add('svg-icon');
             projectButton.setAttribute("class", "project-button");
             projectButton.setAttribute("id", projectId);
-            projectButton.textContent = project.getProjectName();
+            const projectTitle = document.createElement("p");
+            projectTitle.setAttribute("class", "project-title");
+            projectTitle.textContent = project.getProjectName();
+            projectButton.appendChild(svgImage);
+            projectButton.appendChild(projectTitle);
+
             projectsContainer.appendChild(projectButton);
         }
     
@@ -133,7 +142,6 @@ const renderTasks = (tasks) => {
         });
     }
     
-
     const taskDeletes = document.querySelectorAll(".task-delete");
 
     if (taskDeletes.length !== 0) {
