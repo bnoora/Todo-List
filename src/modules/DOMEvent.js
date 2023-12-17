@@ -184,6 +184,10 @@ const renderTasks = (tasks) => {
 
 // Render the new project popup for creating a new project
 const renderNewProjectPopup = () => {
+
+    const popupContainer = document.createElement("div");
+    popupContainer.setAttribute("class", "popup-container");
+
     const newProjectPopup = document.createElement("div");
     newProjectPopup.setAttribute("class", "popup");
     newProjectPopup.setAttribute("id", "new-project-popup");
@@ -223,7 +227,8 @@ const renderNewProjectPopup = () => {
     newProjectPopupFormSubmit.setAttribute("value", "Create Project");
     newProjectPopupForm.appendChild(newProjectPopupFormSubmit);
 
-    container.appendChild(newProjectPopup);
+    container.appendChild(popupContainer);
+    popupContainer.appendChild(newProjectPopup);
 
     newProjectPopupForm.addEventListener("submit", (e) => {
         e.preventDefault();
@@ -233,6 +238,13 @@ const renderNewProjectPopup = () => {
         newProjectPopup.remove();
         renderProjects();
     });
+
+    popupContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("popup-container")) {
+            popupContainer.remove();
+        }
+    });
+
 }
 
 
