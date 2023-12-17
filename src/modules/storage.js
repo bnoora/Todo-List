@@ -5,7 +5,7 @@ import TodoList from "./todolist";
 
 class Storage {
     constructor() {
-        this.storage = {projects: []};
+        this.storage = {projects: {}};
     }
 
     deleteStorage() {
@@ -29,30 +29,32 @@ class Storage {
             this.saveStorage();
         }
         this.storage = JSON.parse(localStorage.getItem('todostorage'));
-        for (let i = 0; i < this.storage.projects.length; i++) {
-            this.storage.projects[i] = Object.assign(new Project(), this.storage.projects[i]);
-            for (let j = 0; j < this.storage.projects[i].tasks.length; j++) {
-                this.storage.projects[i].tasks[j] = Object.assign(new Task(), this.storage.projects[i].tasks[j]);
+        for (let projectId in this.storage.projects) {
+            this.storage.projects[projectId] = Object.assign(new Project(), this.storage.projects[projectId]);
+            for (let taskId in this.storage.projects[projectId].tasks) {
+                this.storage.projects[projectId].tasks[taskId] = Object.assign(new Task(), this.storage.projects[projectId].tasks[taskId]);
             }
         }
     }
-
+    
     newProject(projectName, projectId) {
         const project = new Project();
         project.setProjectName(projectName);
-        project.setProjectId(this.storage.projects.length);
-        this.storage.projects.push(project);
+        projectId = this.generateUniqueId();
+        project.setProjectId(projectId);
+        this.storage.projects[projectId] = project;
         this.saveStorage();
     }
 
     newTask(projectId, taskTitle, taskDescription, taskDueDate, taskPriority) {
         const task = new Task();
-        task.setTaskId(this.storage.projects[projectId].tasks.length);
+        const taskId = this.generateUniqueId();
+        task.setTaskId(taskId);
         task.setTaskTitle(taskTitle);
         task.setTaskDescription(taskDescription);
         task.setTaskDueDate(taskDueDate);
         task.setTaskPriority(taskPriority);
-        this.storage.projects[projectId].appendTask(task);
+        this.storage.projects[projectId].tasks[taskId] = task;
         this.saveStorage();
     }
 
@@ -80,16 +82,16 @@ class Storage {
     }
 
     getProject(projectId) {
-        return this.storage.projects.find(project => project.getProjectId() === projectId);
+        return this.storage.projects[projectId];
     }
 
     getProjectTasks(projectId) {
-        return this.getProject(projectId).getTasks();
+        return this.storage.projects[projectId].getTasks();
     }
 
     getProjects() {
         if (this.storage.projects === undefined) {
-            this.storage.projects = [];
+            this.storage.projects = {};
         }
         return this.storage.projects;
     }
@@ -103,22 +105,33 @@ class Storage {
     }
 
     getTasks() {
-        const tasks = [];
-        this.storage.projects.forEach(project => {
-            project.getTasks().forEach(task => {
-                tasks.push(task);
-            });
-        });
+        const tasks = {};
+        for (let projectId in this.storage.projects) {
+            for (let taskId in this.storage.projects[projectId].tasks) {
+                tasks[taskId] = this.storage.projects[projectId].tasks[taskId];
+            }
+        }
         return tasks;
-    }
-
-    getProjectTasks(projectId) {
-        return this.storage.projects[projectId].getTasks();
     }
 
     addTaskToProject(projectId, task) {
         this.storage.projects[projectId].appendTask(task);
     }
+
+    setTaskCompleted(projectId, taskId, completed) {
+        this.storage.projects[projectId].tasks[taskId].setTaskCompleted(completed);
+        this.saveStorage();
+    }
+
+    getTaskCompleted(projectId, taskId) {
+        return this.storage.projects[projectId].tasks[taskId].getTaskCompleted();
+    }
+
+    generateUniqueId() {
+        return Date.now().toString() + Math.random().toString(36)
+    }
 }
+
+
 
 export default Storage;

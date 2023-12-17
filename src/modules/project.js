@@ -2,7 +2,8 @@ class Project {
     constructor() {
         this.name = 'Project';
         this.id = 0;
-        this.tasks = [];
+        this.tasks = {};
+        this.taskCount = 0;
     }
 
     setProjectName(name) {
@@ -27,6 +28,10 @@ class Project {
 
     getTasks() {
         return this.tasks;
+    }
+
+    removeTask(taskId) {
+        delete this.tasks[taskId];
     }
 }
 

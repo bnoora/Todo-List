@@ -10,9 +10,6 @@ var currProjectId = 0;
 // Render the project on the side bar
 const renderProjects = () => {
     const projects = allProjects(storage);
-    console.log(1);
-    console.log(projects);
-    console.log(3);
     const projectsContainer = document.getElementById("projects-container");
     const upperModalContent = document.getElementById("upper-modal-content");
     projectsContainer.innerHTML = "";
@@ -21,7 +18,6 @@ const renderProjects = () => {
     renderTodayAndUpcomingWeekButtons(upperModalContent);
 
     if (projects.length === 0) {
-        console.log(1);
         const noProjects = document.createElement("p");
         noProjects.setAttribute("class", "no-projects");
         noProjects.textContent = "No Projects";
@@ -63,19 +59,19 @@ const renderProjects = () => {
 const renderTasks = (tasks) => {
     const taskContainer = document.getElementById("task-container");
     taskContainer.innerHTML = "";
-    if (tasks.length === 0) {
+    console.log(tasks);
+    if (Object.keys(tasks).length === 0) {
         const noTasks = document.createElement("p");
         noTasks.setAttribute("class", "no-tasks");
         noTasks.textContent = "No Tasks";
         taskContainer.appendChild(noTasks);
     }
     else {
-        console.log(tasks);
-        tasks.forEach(task => {
+        for (let taskId in tasks) {
+            const task = tasks[taskId];
             const taskDiv = document.createElement("div");
             taskDiv.setAttribute("class", "task-div");
             taskDiv.setAttribute("id", task.getTaskId());
-            console.log(task.getTaskId());
 
             const taskTitle = document.createElement("h3");
             taskTitle.setAttribute("class", "task-title");
@@ -87,43 +83,69 @@ const renderTasks = (tasks) => {
             taskDueDate.textContent = task.getTaskDueDate();
             taskDiv.appendChild(taskDueDate);
 
+            if (task.getTaskPriority() === "High") {
+                taskDiv.classList.add("task-high");
+            }
+            if (task.getTaskPriority() === "Medium") {
+                taskDiv.classList.add("task-medium");
+            }
+            if (task.getTaskPriority() === "Low") {
+                taskDiv.classList.add("task-low");
+            }
+
+            const taskActions = document.createElement("div");
+            taskActions.setAttribute("class", "task-actions");
+            taskDiv.appendChild(taskActions);
+
             const taskDelete = document.createElement("button");
             taskDelete.setAttribute("class", "task-delete");
             taskDelete.textContent = "Delete";
-            taskDiv.appendChild(taskDelete);
+            taskActions.appendChild(taskDelete);
 
-            if (task.getTaskPriority() === "High") {
-                taskDiv.setAttribute("class", "task-high");
+            const taskCompleted = document.createElement("input");
+            taskCompleted.setAttribute("class", "task-completed");
+            taskCompleted.setAttribute("id", "task-completed");
+            taskCompleted.setAttribute("type", "checkbox");
+            if (task.getTaskCompleted() === true) {
+                taskCompleted.checked = true;
             }
-            if (task.getTaskPriority() === "Medium") {
-                taskDiv.setAttribute("class", "task-medium");
-            }
-            if (task.getTaskPriority() === "Low") {
-                taskDiv.setAttribute("class", "task-low");
-            }
+            taskActions.appendChild(taskCompleted);
 
             taskContainer.appendChild(taskDiv);
-        });
+        };
     }    
 
     const taskDivs = document.querySelectorAll(".task-div");
 
-    taskDivs.forEach(taskDiv => {
-        taskDiv.addEventListener("click", (e) => {
-            const task = storage.tasks[taskDiv.id];
-            renderTaskPopup(task);
+    if (taskDivs.length ==! 0) {
+        taskDivs.forEach(taskDiv => {
+            taskDiv.addEventListener("click", (e) => {
+                console.log(1);
+            });
         });
-    });
+    }
 
     const taskDeletes = document.querySelectorAll(".task-delete");
 
-    taskDeletes.forEach(taskDelete => {
-        taskDelete.addEventListener("click", (e) => {
-            console.log(taskDelete.parentNode.id);
-            storage.deleteTask(currProjectId, taskDelete.parentNode.id);
-            renderTasks(tasks);
+    if (taskDeletes.length ==! 0) {
+        taskDeletes.forEach(taskDelete => {
+            taskDelete.addEventListener("click", (e) => {
+                storage.deleteTask(currProjectId, taskDelete.parentNode.id);
+                renderTasks(tasks);
+            });
         });
-    });
+    }
+
+    const taskCompleteds = document.querySelectorAll(".task-completed");
+
+    if (taskCompleteds.length ==! 0) {
+        taskCompleteds.forEach(taskCompleted => {
+            taskCompleted.addEventListener("click", (e) => {
+                storage.setTaskCompleted(currProjectId, taskCompleted.parentNode.id, taskCompleted.checked);
+                renderTasks(tasks);
+            });
+        });
+    }
 
     const newTaskdiv = document.createElement("div");
     newTaskdiv.setAttribute("class", "new-task-div");
@@ -279,81 +301,82 @@ const renderNewTaskPopup = () => {
 
 // Render the task popup for viewing a task
 const renderTaskPopup = (task) => {
-    const taskPopup = document.createElement("div");
-    taskPopup.setAttribute("class", "popup");
-    taskPopup.setAttribute("id", "task-popup");
+    console.log(1);
+    // const taskPopup = document.createElement("div");
+    // taskPopup.setAttribute("class", "popup");
+    // taskPopup.setAttribute("id", "task-popup");
 
-    const taskPopupContent = document.createElement("div");
-    taskPopupContent.setAttribute("class", "popup-content");
-    taskPopupContent.setAttribute("id", "task-popup-content");
-    taskPopup.appendChild(taskPopupContent);
+    // const taskPopupContent = document.createElement("div");
+    // taskPopupContent.setAttribute("class", "popup-content");
+    // taskPopupContent.setAttribute("id", "task-popup-content");
+    // taskPopup.appendChild(taskPopupContent);
 
-    const taskPopupHeader = document.createElement("h2");
-    taskPopupHeader.setAttribute("class", "popup-header");
-    taskPopupHeader.textContent = "Task";
-    taskPopupContent.appendChild(taskPopupHeader);
+    // const taskPopupHeader = document.createElement("h2");
+    // taskPopupHeader.setAttribute("class", "popup-header");
+    // taskPopupHeader.textContent = "Task";
+    // taskPopupContent.appendChild(taskPopupHeader);
 
-    const taskTitle = document.createElement("h3");
-    taskTitle.setAttribute("class", "task-title");
-    taskTitle.textContent = task.getTaskTitle();
-    taskPopupContent.appendChild(taskTitle);
+    // const taskTitle = document.createElement("h3");
+    // taskTitle.setAttribute("class", "task-title");
+    // taskTitle.textContent = task.getTaskTitle();
+    // taskPopupContent.appendChild(taskTitle);
 
-    const taskDesc = document.createElement("p");
-    taskDesc.setAttribute("class", "task-desc");
-    taskDesc.textContent = task.getTaskDescription();
-    taskPopupContent.appendChild(taskDesc);
+    // const taskDesc = document.createElement("p");
+    // taskDesc.setAttribute("class", "task-desc");
+    // taskDesc.textContent = task.getTaskDescription();
+    // taskPopupContent.appendChild(taskDesc);
 
-    const taskDueDate = document.createElement("p");
-    taskDueDate.setAttribute("class", "task-due-date");
-    taskDueDate.textContent = task.getTaskDueDate();
-    taskPopupContent.appendChild(taskDueDate);
+    // const taskDueDate = document.createElement("p");
+    // taskDueDate.setAttribute("class", "task-due-date");
+    // taskDueDate.textContent = task.getTaskDueDate();
+    // taskPopupContent.appendChild(taskDueDate);
     
-    const taskPriority = document.createElement("p");
-    taskPriority.setAttribute("class", "task-priority");
-    taskPriority.textContent = task.getTaskPriority();
-    taskPopupContent.appendChild(taskPriority);
+    // const taskPriority = document.createElement("p");
+    // taskPriority.setAttribute("class", "task-priority");
+    // taskPriority.textContent = task.getTaskPriority();
+    // taskPopupContent.appendChild(taskPriority);
 
-    const taskCompleted = document.createElement("button");
-    taskCompleted.setAttribute("class", "task-completed");
-    taskCompleted.setAttribute("id", "task-completed");
-    if (task.getTaskCompleted() === true) {
-        taskCompleted.setAttribute("class", "completed-task");
-        taskCompleted.textContent = "Completed";
-    }
-    else {
-        taskCompleted.textContent = "Mark as Completed";
-    }
-    taskPopupContent.appendChild(taskCompleted);
+    // const taskCompleted = document.createElement("button");
+    // taskCompleted.setAttribute("class", "task-completed");
+    // taskCompleted.setAttribute("id", "task-completed");
+    // if (task.getTaskCompleted() === true) {
+    //     taskCompleted.setAttribute("class", "completed-task");
+    //     taskCompleted.textContent = "Completed";
+    // }
+    // else {
+    //     taskCompleted.textContent = "Mark as Completed";
+    // }
+    // taskPopupContent.appendChild(taskCompleted);
 
-    const taskDelete = document.createElement("button");
-    taskDelete.setAttribute("class", "task-delete");
-    taskDelete.setAttribute("id", "task-delete");
-    taskDelete.textContent = "Delete";
-    taskPopupContent.appendChild(taskDelete);
+    // const taskDelete = document.createElement("button");
+    // taskDelete.setAttribute("class", "task-delete");
+    // taskDelete.setAttribute("id", "task-delete");
+    // taskDelete.textContent = "Delete";
+    // taskPopupContent.appendChild(taskDelete);
 
-    const editTaskButton = document.createElement("button");
-    editTaskButton.setAttribute("class", "edit-task-button");
-    editTaskButton.setAttribute("id", "edit-task-button");
-    editTaskButton.textContent = "Edit";
-    taskPopupContent.appendChild(editTaskButton);
+    // const editTaskButton = document.createElement("button");
+    // editTaskButton.setAttribute("class", "edit-task-button");
+    // editTaskButton.setAttribute("id", "edit-task-button");
+    // editTaskButton.textContent = "Edit";
+    // taskPopupContent.appendChild(editTaskButton);
 
 
-    container.appendChild(taskPopup);
+    // container.appendChild(taskPopup);
     
-    taskCompleted.addEventListener("click", (e) => {
-        task.setTaskCompleted(!task.getTaskCompleted());
-        renderTaskPopup(task);
-    });
+    // taskCompleted.addEventListener("click", (e) => {
+    //     task.setTaskCompleted(!task.getTaskCompleted());
+    //     renderTaskPopup(task);
+    // });
 
-    taskDelete.addEventListener("click", (e) => {
-        storage.deleteTask(task.getTaskId());
-        renderTasks(tasksByProject(currProjectId, storage));
-        taskPopup.remove();
-    });
+    // taskDelete.addEventListener("click", (e) => {
+    //     storage.deleteTask(task.getTaskId());
+    //     renderTasks(tasksByProject(currProjectId, storage));
+    //     taskPopup.remove();
+    // });
 
-    editTaskButton.addEventListener("click", (e) => {
-        renderEditTaskPopup(task);
-    });
+    // editTaskButton.addEventListener("click", (e) => {
+    //     renderEditTaskPopup(task);
+    // });
 }
 
 // Render the edit task popup for editing a task
