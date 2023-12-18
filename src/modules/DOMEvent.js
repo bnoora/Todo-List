@@ -181,6 +181,17 @@ const renderTasks = (tasks, partial = false) => {
         });
     }
 
+    const taskEdits = document.querySelectorAll(".task-edit");
+
+    if (taskEdits.length !== 0) {
+        taskEdits.forEach(taskEdit => {
+            taskEdit.addEventListener("click", (e) => {
+                const task = storage.getTask(currProjectId, taskEdit.parentNode.parentNode.id);
+                renderEditTaskPopup(task);
+            });
+        });
+    }
+
     if (partial === false) {
         const newTaskdiv = document.createElement("div");
         newTaskdiv.setAttribute("class", "new-task-div");
@@ -191,6 +202,7 @@ const renderTasks = (tasks, partial = false) => {
             renderNewTaskPopup();
         });
     }
+
 }
 
 // Render the new project popup for creating a new project
@@ -470,12 +482,6 @@ const renderEditTaskPopup = (task) => {
     editTaskPopupForm.setAttribute("id", "edit-task-popup-form");
     editTaskPopupContent.appendChild(editTaskPopupForm);
 
-    const editTaskPopupFormLabel = document.createElement("label");
-    editTaskPopupFormLabel.setAttribute("class", "popup-form-label");
-    editTaskPopupFormLabel.setAttribute("for", "edit-task-popup-form-input");
-    editTaskPopupFormLabel.textContent = "Task Name";
-    editTaskPopupForm.appendChild(editTaskPopupFormLabel);
-
     const editTaskPopupFormInput = document.createElement("input");
     editTaskPopupFormInput.setAttribute("class", "popup-form-input");
     editTaskPopupFormInput.setAttribute("id", "edit-task-popup-form-input");
@@ -537,13 +543,17 @@ const renderEditTaskPopup = (task) => {
         const editTaskDesc = document.getElementById("edit-task-popup-form-desc").value;
         const editTaskDueDate = document.getElementById("edit-task-popup-form-due-date").value;
         const editTaskPriority = document.getElementById("edit-task-popup-form-priority").value;
-        task.setTaskTitle(editTaskTitle);
-        task.setTaskDescription(editTaskDesc);
-        task.setTaskDueDate(editTaskDueDate);
-        task.setTaskPriority(editTaskPriority);
-        renderTaskPopup(task);
-        editTaskPopup.remove();
+        storage.editTask(currProjectId, task.getTaskId(), editTaskTitle, editTaskDesc, editTaskDueDate, editTaskPriority);
+        renderTasks(tasksByProject(currProjectId, storage));
+        popupContainer.remove();
     });
+
+    popupContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("popup-container")) {
+            popupContainer.remove();
+        }
+    });
+    
 };
 
 // Render the today and upcoming week buttons on the side bar

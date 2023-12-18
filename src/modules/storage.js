@@ -57,6 +57,14 @@ class Storage {
         this.saveStorage();
     }
 
+    editTask(projectId, taskId, taskTitle, taskDescription, taskDueDate, taskPriority) {
+        this.storage.projects[projectId].tasks[taskId].setTaskTitle(taskTitle);
+        this.storage.projects[projectId].tasks[taskId].setTaskDescription(taskDescription);
+        this.storage.projects[projectId].tasks[taskId].setTaskDueDate(taskDueDate);
+        this.storage.projects[projectId].tasks[taskId].setTaskPriority(taskPriority);
+        this.saveStorage();
+    }
+
     deleteProject(projectId) {
         if (this.storage.projects[projectId]) {
             delete this.storage.projects[projectId];
