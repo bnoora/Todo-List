@@ -93,12 +93,12 @@ const renderTasks = (tasks, partial = false) => {
             taskDiv.setAttribute("class", "task-div");
             taskDiv.setAttribute("id", task.getTaskId());
 
-            const taskTitle = document.createElement("h3");
+            const taskTitle = document.createElement("div");
             taskTitle.setAttribute("class", "task-title");
             taskTitle.textContent = task.getTaskTitle();
             taskDiv.appendChild(taskTitle);
 
-            const taskDueDate = document.createElement("p");
+            const taskDueDate = document.createElement("div");
             taskDueDate.setAttribute("class", "task-due-date");
             taskDueDate.textContent = task.getTaskDueDate();
             taskDiv.appendChild(taskDueDate);
@@ -117,10 +117,18 @@ const renderTasks = (tasks, partial = false) => {
             taskActions.setAttribute("class", "task-actions");
             taskDiv.appendChild(taskActions);
 
-            const taskDelete = document.createElement("button");
+            const taskEdit = document.createElement("img");
+            taskEdit.setAttribute("class", "task-edit");
+            taskEdit.classList.add("exclude-from-div-click");
+            taskEdit.setAttribute("id", "task-edit");
+            taskEdit.setAttribute('src', './svg/pencil.svg');
+            taskActions.appendChild(taskEdit);
+
+            const taskDelete = document.createElement("img");
             taskDelete.setAttribute("class", "task-delete");
             taskDelete.classList.add("exclude-from-div-click");
-            taskDelete.textContent = "Delete";
+            taskDelete.setAttribute("id", "task-delete");
+            taskDelete.setAttribute('src', './svg/trash.svg');
             taskActions.appendChild(taskDelete);
 
             const taskCompleted = document.createElement("input");
@@ -130,6 +138,7 @@ const renderTasks = (tasks, partial = false) => {
             taskCompleted.setAttribute("type", "checkbox");
             if (task.getTaskCompleted() === true) {
                 taskCompleted.checked = true;
+                taskDiv.classList.add("completed-task");
             }
             taskActions.appendChild(taskCompleted);
 
@@ -437,6 +446,11 @@ const renderTaskPopup = (task) => {
 
 // Render the edit task popup for editing a task
 const renderEditTaskPopup = (task) => {
+
+    const popupContainer = document.createElement("div");
+    popupContainer.setAttribute("class", "popup-container");
+
+
     const editTaskPopup = document.createElement("div");
     editTaskPopup.setAttribute("class", "popup");
     editTaskPopup.setAttribute("id", "edit-task-popup");
@@ -514,7 +528,8 @@ const renderEditTaskPopup = (task) => {
     editTaskPopupFormSubmit.setAttribute("value", "Edit Task");
     editTaskPopupForm.appendChild(editTaskPopupFormSubmit);
 
-    container.appendChild(editTaskPopup);
+    container.appendChild(popupContainer);
+    popupContainer.appendChild(editTaskPopup);
 
     editTaskPopupForm.addEventListener("submit", (e) => {
         e.preventDefault();
