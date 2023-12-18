@@ -246,7 +246,7 @@ aside section > .project-button, .sproject-button, .new-project-button {
     transform: translateY(-50%);
 }
 
-.task-delete {
+.task-delete-svg {
     height: 20px; 
     width: auto;
     margin-left: 10px;
@@ -260,7 +260,7 @@ aside section > .project-button, .sproject-button, .new-project-button {
     align-self: center;
 }
 
-.task-delete:hover {
+.task-delete-svg:hover {
     height: 20px; 
     width: auto;
     margin-left: 10px;

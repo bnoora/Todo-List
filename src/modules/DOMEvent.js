@@ -125,7 +125,7 @@ const renderTasks = (tasks, partial = false) => {
             taskActions.appendChild(taskEdit);
 
             const taskDelete = document.createElement("img");
-            taskDelete.setAttribute("class", "task-delete");
+            taskDelete.setAttribute("class", "task-delete-svg");
             taskDelete.classList.add("exclude-from-div-click");
             taskDelete.setAttribute("id", "task-delete");
             taskDelete.setAttribute('src', './svg/trash.svg');
@@ -553,7 +553,7 @@ const renderEditTaskPopup = (task) => {
             popupContainer.remove();
         }
     });
-    
+
 };
 
 // Render the today and upcoming week buttons on the side bar
