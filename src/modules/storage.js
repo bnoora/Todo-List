@@ -146,36 +146,44 @@ class Storage {
         const todayTasks = {};
         const tasks = this.getTasks();
         const today = new Date();
-        const todayDay = today.getDay();
-        const todayMonth = today.getMonth();
-        const todayYear = today.getFullYear();
+        const todayFormatted = `${today.getFullYear()}-${(today.getMonth() + 1).toString().padStart(2, '0')}-${today.getDate().toString().padStart(2, '0')}`;
         for (let taskId in tasks) {
-            if (tasks[taskId].getTaskDueDate() === new Date(todayYear, todayMonth, todayDay).toDateString()) {
+            const taskDueDate = tasks[taskId].getTaskDueDate();
+            if (taskDueDate === todayFormatted) {
                 todayTasks[taskId] = tasks[taskId];
             }
         }
         return todayTasks;
     }
-
+    
     getThisWeekTasks() {
         const thisWeekTasks = {};
         const tasks = this.getTasks();
         const today = new Date();
-        const todayDay = today.getDay();
-        const todayDate = today.getDate();
-        const todayMonth = today.getMonth();
         const todayYear = today.getFullYear();
+        const todayMonth = today.getMonth();
+        const todayDate = today.getDate();
+        const todayDay = today.getDay();
         const thisWeek = [];
+    
+        const weekStartDate = new Date(todayYear, todayMonth, todayDate - todayDay);
+    
         for (let i = 0; i < 7; i++) {
-            thisWeek.push(new Date(todayYear, todayMonth, todayDate - todayDay + i).toDateString());
+            const currentDate = new Date(weekStartDate.getFullYear(), weekStartDate.getMonth(), weekStartDate.getDate() + i);
+            const formattedDate = `${currentDate.getFullYear()}-${(currentDate.getMonth() + 1).toString().padStart(2, '0')}-${currentDate.getDate().toString().padStart(2, '0')}`;
+            thisWeek.push(formattedDate);
         }
+
         for (let taskId in tasks) {
-            if (thisWeek.includes(tasks[taskId].getTaskDueDate())) {
+            let taskDueDateFormatted = tasks[taskId].getTaskDueDate();
+            if (thisWeek.includes(taskDueDateFormatted)) {
                 thisWeekTasks[taskId] = tasks[taskId];
             }
         }
         return thisWeekTasks;
     }
+    
+    
         
 }
 

@@ -77,7 +77,7 @@ const renderProjects = () => {
 }
 
 // Render the tasks on the main page from the selected project
-const renderTasks = (tasks) => {
+const renderTasks = (tasks, partial = false) => {
     const taskContainer = document.getElementById("task-container");
     taskContainer.innerHTML = "";
     if (Object.keys(tasks).length === 0) {
@@ -172,14 +172,16 @@ const renderTasks = (tasks) => {
         });
     }
 
-    const newTaskdiv = document.createElement("div");
-    newTaskdiv.setAttribute("class", "new-task-div");
-    newTaskdiv.textContent = "+ New Task";
-    taskContainer.appendChild(newTaskdiv);
+    if (partial === false) {
+        const newTaskdiv = document.createElement("div");
+        newTaskdiv.setAttribute("class", "new-task-div");
+        newTaskdiv.textContent = "+ New Task";
+        taskContainer.appendChild(newTaskdiv);
 
-    newTaskdiv.addEventListener("click", (e) => {
-        renderNewTaskPopup();
-    });
+        newTaskdiv.addEventListener("click", (e) => {
+            renderNewTaskPopup();
+        });
+    }
 }
 
 // Render the new project popup for creating a new project
@@ -346,81 +348,91 @@ const renderNewTaskPopup = () => {
 
 // Render the task popup for viewing a task
 const renderTaskPopup = (task) => {
-    // const taskPopup = document.createElement("div");
-    // taskPopup.setAttribute("class", "popup");
-    // taskPopup.setAttribute("id", "task-popup");
+    const taskId = task.getTaskId();
+    const popupContainer = document.createElement("div");
+    popupContainer.setAttribute("class", "popup-container");
 
-    // const taskPopupContent = document.createElement("div");
-    // taskPopupContent.setAttribute("class", "popup-content");
-    // taskPopupContent.setAttribute("id", "task-popup-content");
-    // taskPopup.appendChild(taskPopupContent);
+    const taskPopup = document.createElement("div");
+    taskPopup.setAttribute("class", "popup");
+    taskPopup.setAttribute("id", "task-popup");
 
-    // const taskPopupHeader = document.createElement("h2");
-    // taskPopupHeader.setAttribute("class", "popup-header");
-    // taskPopupHeader.textContent = "Task";
-    // taskPopupContent.appendChild(taskPopupHeader);
+    const taskPopupContent = document.createElement("div");
+    taskPopupContent.setAttribute("class", "popup-content");
+    taskPopupContent.setAttribute("id", "task-popup-content");
+    taskPopup.appendChild(taskPopupContent);
 
-    // const taskTitle = document.createElement("h3");
-    // taskTitle.setAttribute("class", "task-title");
-    // taskTitle.textContent = task.getTaskTitle();
-    // taskPopupContent.appendChild(taskTitle);
+    const taskTitle = document.createElement("h2");
+    taskTitle.setAttribute("class", "task-title");
+    taskTitle.textContent = task.getTaskTitle();
+    taskPopupContent.appendChild(taskTitle);
 
-    // const taskDesc = document.createElement("p");
-    // taskDesc.setAttribute("class", "task-desc");
-    // taskDesc.textContent = task.getTaskDescription();
-    // taskPopupContent.appendChild(taskDesc);
+    const taskDesc = document.createElement("p");
+    taskDesc.setAttribute("class", "task-desc");
+    taskDesc.textContent = task.getTaskDescription();
+    taskPopupContent.appendChild(taskDesc);
 
-    // const taskDueDate = document.createElement("p");
-    // taskDueDate.setAttribute("class", "task-due-date");
-    // taskDueDate.textContent = task.getTaskDueDate();
-    // taskPopupContent.appendChild(taskDueDate);
+    const taskDueDate = document.createElement("p");
+    taskDueDate.setAttribute("class", "task-due-date");
+    taskDueDate.textContent = task.getTaskDueDate();
+    taskPopupContent.appendChild(taskDueDate);
     
-    // const taskPriority = document.createElement("p");
-    // taskPriority.setAttribute("class", "task-priority");
-    // taskPriority.textContent = task.getTaskPriority();
-    // taskPopupContent.appendChild(taskPriority);
+    const taskPriority = document.createElement("p");
+    taskPriority.setAttribute("class", "task-priority");
+    taskPriority.textContent = task.getTaskPriority();
+    taskPopupContent.appendChild(taskPriority);
 
-    // const taskCompleted = document.createElement("button");
-    // taskCompleted.setAttribute("class", "task-completed");
-    // taskCompleted.setAttribute("id", "task-completed");
-    // if (task.getTaskCompleted() === true) {
-    //     taskCompleted.setAttribute("class", "completed-task");
-    //     taskCompleted.textContent = "Completed";
-    // }
-    // else {
-    //     taskCompleted.textContent = "Mark as Completed";
-    // }
-    // taskPopupContent.appendChild(taskCompleted);
+    const taskCompleted = document.createElement("button");
+    taskCompleted.setAttribute("class", "task-completed");
+    taskCompleted.setAttribute("id", "task-completed");
+    if (task.getTaskCompleted() === true) {
+        taskCompleted.setAttribute("class", "completed-task");
+        taskCompleted.textContent = "Completed";
+    }
+    else {
+        taskCompleted.textContent = "Mark as Completed";
+    }
+    taskPopupContent.appendChild(taskCompleted);
 
-    // const taskDelete = document.createElement("button");
-    // taskDelete.setAttribute("class", "task-delete");
-    // taskDelete.setAttribute("id", "task-delete");
-    // taskDelete.textContent = "Delete";
-    // taskPopupContent.appendChild(taskDelete);
+    const taskDelete = document.createElement("button");
+    taskDelete.setAttribute("class", "task-delete");
+    taskDelete.setAttribute("id", "task-delete");
+    taskDelete.textContent = "Delete";
+    taskPopupContent.appendChild(taskDelete);
 
-    // const editTaskButton = document.createElement("button");
-    // editTaskButton.setAttribute("class", "edit-task-button");
-    // editTaskButton.setAttribute("id", "edit-task-button");
-    // editTaskButton.textContent = "Edit";
-    // taskPopupContent.appendChild(editTaskButton);
+    const editTaskButton = document.createElement("button");
+    editTaskButton.setAttribute("class", "edit-task-button");
+    editTaskButton.setAttribute("id", "edit-task-button");
+    editTaskButton.textContent = "Edit";
+    taskPopupContent.appendChild(editTaskButton);
 
 
-    // container.appendChild(taskPopup);
+    container.appendChild(popupContainer);
+    popupContainer.appendChild(taskPopup);
     
-    // taskCompleted.addEventListener("click", (e) => {
-    //     task.setTaskCompleted(!task.getTaskCompleted());
-    //     renderTaskPopup(task);
-    // });
+    taskCompleted.addEventListener("click", (e) => {
+        task.setTaskCompleted(!task.getTaskCompleted());
+        storage.setTaskCompleted(currProjectId, taskId, task.getTaskCompleted());
+        popupContainer.remove();
+        renderTasks(tasksByProject(currProjectId, storage));
+        renderTaskPopup(task);
+    });
 
-    // taskDelete.addEventListener("click", (e) => {
-    //     storage.deleteTask(task.getTaskId());
-    //     renderTasks(tasksByProject(currProjectId, storage));
-    //     taskPopup.remove();
-    // });
+    taskDelete.addEventListener("click", (e) => {
+        storage.deleteTask(currProjectId, taskId);
+        renderTasks(tasksByProject(currProjectId, storage));
+        popupContainer.remove();
+    });
 
-    // editTaskButton.addEventListener("click", (e) => {
-    //     renderEditTaskPopup(task);
-    // });
+    editTaskButton.addEventListener("click", (e) => {
+        renderEditTaskPopup(task);
+    });
+
+    popupContainer.addEventListener("click", (e) => {
+        if (e.target.classList.contains("popup-container")) {
+            popupContainer.remove();
+        }
+    });
+
 }
 
 // Render the edit task popup for editing a task
@@ -550,12 +562,12 @@ const renderTodayAndUpcomingWeekButtons = (upperModalContent) => {
 
     todayButton.addEventListener("click", (e) => {
         const tasks = storage.getTodayTasks();
-        renderTasks(tasks);
+        renderTasks(tasks, true);
     });
 
     upcomingWeekButton.addEventListener("click", (e) => {
         const tasks = storage.getThisWeekTasks();
-        renderTasks(tasks);
+        renderTasks(tasks, true);
     });
 }
 
